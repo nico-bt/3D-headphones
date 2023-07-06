@@ -6,7 +6,7 @@ Command: npx gltfjsx@6.2.3 Artics.glb --transform
 import React, { useLayoutEffect, useRef } from "react"
 import gsap from "gsap"
 import { OrbitControls, useGLTF, useScroll } from "@react-three/drei"
-import { useFrame } from "@react-three/fiber"
+import { useFrame, useThree } from "@react-three/fiber"
 
 export function Model(props) {
   // animation controls
@@ -15,50 +15,464 @@ export function Model(props) {
 
   // meshes ref
   const generalGroupRef = useRef()
+  const coverLeftRef = useRef()
+  const rightCoverRef = useRef()
+  const rightCoverInnerRef = useRef()
+  const inside1Ref = useRef()
+  const inside2Ref = useRef()
+  const controls = useRef()
+  const camera = useThree((state) => state.camera)
+
+  // Html div references
+  const page_1_ref = useRef()
+  const page_2_ref = useRef()
+  const page_3_ref = useRef()
+  const page_4_ref = useRef()
+  const page_5_ref = useRef()
+  const page_6_ref = useRef()
+
+  useLayoutEffect(() => {
+    page_1_ref.current = document.getElementById("page-1")
+    page_2_ref.current = document.getElementById("page-2")
+    page_3_ref.current = document.getElementById("page-3")
+    page_4_ref.current = document.getElementById("page-4")
+    page_5_ref.current = document.getElementById("page-5")
+    page_6_ref.current = document.getElementById("page-6")
+  }, [])
 
   useLayoutEffect(() => {
     timeline.current = gsap.timeline()
 
-    timeline.current.to(generalGroupRef.current.rotation, { y: Math.PI * 2 }, 3)
-    timeline.current.to(generalGroupRef.current.rotation, { y: -Math.PI * 2 }, 5)
-  })
+    // ANIMATIONS
+    //------------------------------------
+    // headband animations
+    let AnimationsData = []
+
+    const HeadbandAnimations = [
+      {
+        // Html div
+        // Restore previous animations
+        objectToAnimate: page_1_ref.current,
+        properties: { opacity: 0, duration: 0.3 },
+        timelinePoint: 0.5,
+      },
+      // html div
+      {
+        objectToAnimate: page_2_ref.current,
+        properties: { opacity: 1, duration: 0.8 },
+        timelinePoint: 1.3,
+      },
+      // Controls, Camera, Camera zoom
+      {
+        objectToAnimate: controls.current.target,
+        properties: { y: 3.0974, x: 0, z: 0 },
+        timelinePoint: 0.8,
+      },
+      {
+        objectToAnimate: camera.position,
+        properties: { x: 0, y: 6.6097, z: 8.3, duration: 0.8 },
+        timelinePoint: 1,
+      },
+      {
+        objectToAnimate: camera,
+        properties: {
+          zoom: 2.5,
+          duration: 0.8,
+          onUpdate: () => {
+            camera.updateProjectionMatrix()
+          },
+        },
+        timelinePoint: 1,
+      },
+    ]
+    AnimationsData = [...AnimationsData, ...HeadbandAnimations]
+
+    //sounds controls
+    const SoundControlsAnimations = [
+      // Restore previous animations
+      {
+        objectToAnimate: page_2_ref.current,
+        properties: { opacity: 0, duration: 0.3 },
+        timelinePoint: 2.1,
+      },
+
+      //html div
+      {
+        objectToAnimate: page_3_ref.current,
+        properties: { opacity: 1, duration: 0.3 },
+        timelinePoint: 2.3,
+      },
+      // Controls, camera, camera zoom
+      {
+        objectToAnimate: controls.current.target,
+        properties: {
+          x: -1.5761,
+          y: -1.3143,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 2,
+      },
+      {
+        objectToAnimate: camera.position,
+        properties: { x: 0, y: 0, z: 8.3, duration: 0.8 },
+        timelinePoint: 2,
+      },
+      {
+        objectToAnimate: camera,
+        properties: {
+          zoom: 2,
+          duration: 0.3,
+          onUpdate: () => {
+            camera.updateProjectionMatrix()
+          },
+        },
+        timelinePoint: 2.3,
+      },
+      // General group
+      {
+        objectToAnimate: generalGroupRef.current.rotation,
+        properties: { x: -0.38311, y: 0.16447, z: -0.1356, duration: 0.8 },
+        timelinePoint: 2.1,
+      },
+    ]
+    AnimationsData = [...AnimationsData, ...SoundControlsAnimations]
+
+    //Battery
+    const BatteryAnimations = [
+      // Restore previous animations
+      {
+        objectToAnimate: page_3_ref.current,
+        properties: { opacity: 0, duration: 0.3 },
+        timelinePoint: 3.2,
+      },
+
+      //html div
+      {
+        objectToAnimate: page_4_ref.current,
+        properties: { opacity: 1, duration: 0.3 },
+        timelinePoint: 3.3,
+      },
+      // controls, camera, camera zoom
+      {
+        objectToAnimate: controls.current.target,
+        properties: { x: 0, y: 0, z: 0, duration: 0.8 },
+        timelinePoint: 3,
+      },
+      {
+        objectToAnimate: camera.position,
+        properties: { x: 0, y: 0, z: 8.5, duration: 0.8 },
+        timelinePoint: 3,
+      },
+      {
+        objectToAnimate: camera,
+        propertines: {
+          zoom: 2.5,
+          duration: 0.8,
+          onUpdate: () => {
+            camera.updateProjectionMatrix()
+          },
+        },
+        timelinePoint: 3,
+      },
+      // General groups
+      {
+        objectToAnimate: generalGroupRef.current.rotation,
+        properties: { x: 0, y: 1.59699, z: -0.63054, duration: 0.8 },
+        timelinePoint: 3,
+      },
+
+      // Battery cover
+      {
+        objectToAnimate: coverLeftRef.current.material,
+        properties: { opacity: 0, transparent: true, duration: 0.4 },
+        timelinePoint: 3.3,
+      },
+    ]
+    AnimationsData = [...AnimationsData, ...BatteryAnimations]
+
+    // Construction
+    const ConstructionAnimations = [
+      // Restore previous animations
+      {
+        objectToAnimate: coverLeftRef.current.material,
+        properties: { opacity: 1, transparent: false, duration: 0.8 },
+        timelinePoint: 4.3,
+      },
+      {
+        objectToAnimate: page_4_ref.current,
+        properties: {
+          opacity: 0,
+          duration: 0.3,
+        },
+        timelinePoint: 4.1,
+      },
+      // Html div
+      {
+        objectToAnimate: page_5_ref.current,
+        properties: {
+          opacity: 1,
+          duration: 0.8,
+        },
+        timelinePoint: 4.6,
+      },
+      // Controls, Camera and Camera Zoom
+      {
+        objectToAnimate: controls.current.target,
+        properties: {
+          x: 4.4156,
+          y: -1.996,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 4,
+      },
+      {
+        objectToAnimate: camera.position,
+        properties: {
+          x: 4.1873,
+          y: 0,
+          z: 8.2999,
+          duration: 0.8,
+        },
+        timelinePoint: 4,
+      },
+      {
+        objectToAnimate: camera,
+        properties: {
+          zoom: 1.2517,
+          duration: 0.8,
+          onUpdate: () => {
+            camera.updateProjectionMatrix()
+          },
+        },
+        timelinePoint: 4.3,
+      },
+
+      // General group
+      {
+        objectToAnimate: generalGroupRef.current.rotation,
+        properties: {
+          x: 0.21692,
+          y: -0.52559,
+          z: 0.21692,
+          duration: 0.8,
+        },
+        timelinePoint: 4.3,
+      },
+
+      // Inside headphones
+      {
+        objectToAnimate: rightCoverRef.current.position,
+        properties: {
+          x: 4.33,
+          y: -0.89,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 4.8,
+      },
+      {
+        objectToAnimate: rightCoverInnerRef.current.position,
+        properties: {
+          x: 2.96,
+          y: -0.59,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 4.8,
+      },
+      {
+        objectToAnimate: inside1Ref.current.position,
+        properties: {
+          x: 1.78,
+          y: -0.4,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 4.8,
+      },
+      {
+        objectToAnimate: inside2Ref.current.position,
+        properties: {
+          x: 0.99,
+          y: -0.2,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 4.8,
+      },
+    ]
+    AnimationsData = [...AnimationsData, ...ConstructionAnimations]
+
+    // Brand logo animation
+    const BrandLogoAnimations = [
+      // Restore previous animations
+      {
+        objectToAnimate: rightCoverRef.current.position,
+        properties: {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 5.6,
+      },
+      {
+        objectToAnimate: rightCoverInnerRef.current.position,
+        properties: {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 5.6,
+      },
+      {
+        objectToAnimate: inside1Ref.current.position,
+        properties: {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 5.6,
+      },
+      {
+        objectToAnimate: inside2Ref.current.position,
+        properties: {
+          x: 0,
+          y: 0,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 5.6,
+      },
+      {
+        objectToAnimate: page_5_ref.current,
+        properties: {
+          opacity: 0,
+          duration: 0.3,
+        },
+        timelinePoint: 5.8,
+      },
+      {
+        objectToAnimate: page_6_ref.current,
+        properties: {
+          opacity: 1,
+          duration: 0.8,
+        },
+        timelinePoint: 6.2,
+      },
+
+      // Controls, Camera, Camera zoom
+      {
+        objectToAnimate: controls.current.target,
+        properties: {
+          x: -1.8,
+          y: 1.10198,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 5.5,
+      },
+      {
+        objectToAnimate: camera,
+        properties: {
+          zoom: 1.8,
+          duration: 0.8,
+          onUpdate: () => {
+            camera.updateProjectionMatrix()
+          },
+        },
+        timelinePoint: 5.8,
+      },
+      {
+        objectToAnimate: camera.position,
+        properties: {
+          x: 0,
+          y: 0,
+          z: 8.3,
+          duration: 0.8,
+        },
+        timelinePoint: 5.5,
+      },
+      //General group
+      {
+        objectToAnimate: generalGroupRef.current.rotation,
+        properties: {
+          x: 0,
+          y: 1.30195,
+          z: 0,
+          duration: 0.8,
+        },
+        timelinePoint: 5.9,
+      },
+    ]
+    AnimationsData = [...AnimationsData, ...BrandLogoAnimations]
+
+    AnimationsData.map((animation) => {
+      timeline.current.to(
+        animation.objectToAnimate,
+        {
+          ...animation.properties,
+        },
+        animation.timelinePoint
+      )
+    })
+  }, [camera])
 
   useFrame(() => {
     // Vincula el scroll con la animación (0<offset<1 alto total de la pagina)
     // En el timeline.current.to => el numero de tiempo hará referencia al offset
     timeline.current.seek(scrollControl.offset * timeline.current.duration())
-    console.log(scrollControl.offset)
+
+    // console.log(scrollControl.offset)
   })
 
   const { nodes, materials } = useGLTF("/models/Artics-transformed.glb")
 
   return (
     <>
-      <OrbitControls enableZoom={false} />
+      <OrbitControls enableZoom={false} ref={controls} />
 
       <group {...props} dispose={null} ref={generalGroupRef}>
         <mesh geometry={nodes.Cylinders.geometry} material={materials.ArticsMaterial} />
         <mesh geometry={nodes.Pads.geometry} material={materials.ArticsMaterial} />
         <mesh geometry={nodes.Supports.geometry} material={materials.ArticsMaterial} />
-        <mesh geometry={nodes.Cover_Right.geometry} material={materials.ArticsMaterial} />
-        <mesh geometry={nodes.Headband_Inner.geometry} material={materials.ArticsMaterial} />
+        <mesh
+          geometry={nodes.Cover_Right.geometry}
+          material={materials.ArticsMaterial}
+          ref={rightCoverRef}
+        />
+        <mesh
+          geometry={nodes.Headband_Inner.geometry}
+          material={materials.ArticsMaterial}
+          ref={rightCoverInnerRef}
+        />
         <mesh geometry={nodes.Battery.geometry} material={materials.Battery_Texture} />
         <mesh
           geometry={nodes.Inside_1.geometry}
           material={materials.Blue_Metallic}
           position={[0.01, 0, 0]}
+          ref={inside1Ref}
         />
         <mesh
           geometry={nodes.Inside_2.geometry}
           material={materials.Orage_Mertallic}
           position={[0.011, 0, 0]}
+          ref={inside2Ref}
         />
         <mesh
           geometry={nodes.Headband_outter.geometry}
           material={materials.ArticsMaterial_Headband}
         />
         <mesh geometry={nodes.Neon.geometry} material={materials.Material} />
-        <mesh geometry={nodes.Cover_Left.geometry} material={materials.ArticsMaterial_Headband} />
+        <mesh
+          geometry={nodes.Cover_Left.geometry}
+          material={materials.ArticsMaterial_Headband}
+          ref={coverLeftRef}
+        />
         <mesh
           geometry={nodes.Sounds.geometry}
           material={materials.Orange_Plastic}
