@@ -1,15 +1,13 @@
-import { Suspense, useState } from "react"
-import reactLogo from "./assets/react.svg"
-import viteLogo from "/vite.svg"
+import { Suspense } from "react"
 import "./App.css"
 import Scene from "./components/Scene"
+import HtmlContent from "./components/HtmlContent"
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
     <>
       <div className="scene_container">
+        <HtmlContent />
         <Suspense fallback={null}>
           <Scene />
         </Suspense>

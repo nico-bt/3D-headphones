@@ -411,6 +411,8 @@ export function Model(props) {
     ]
     AnimationsData = [...AnimationsData, ...BrandLogoAnimations]
 
+    // Map over Animations para aplicar timeline con gsap
+    //-------------------------------------------------------
     AnimationsData.map((animation) => {
       timeline.current.to(
         animation.objectToAnimate,
